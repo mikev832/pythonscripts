@@ -1,0 +1,51 @@
+import os
+import re
+import shutil
+from PyPDF2 import PdfReader
+
+# Define the list of patterns to search for
+search_patterns = [
+    "pje", "dse", "yk", "dbj"  # Added patterns
+]
+
+# Define the folder containing the PDFs
+folder_path = "/Users/michaelvaught/Downloads/05-hosting"  # Update this path to your folder
+
+# Define the "found" folder where matching files will be copied
+found_folder = os.path.join(folder_path, "found")
+
+# Create the "found" folder if it doesn't exist
+if not os.path.exists(found_folder):
+    os.makedirs(found_folder)
+
+# Recursively search through all files and subfolders
+for root, dirs, files in os.walk(folder_path):
+    for filename in files:
+        # Check if the file is a PDF
+        if filename.endswith(".pdf"):
+            pdf_path = os.path.join(root, filename)
+            try:
+                # Open the PDF file
+                reader = PdfReader(pdf_path)
+                text = ""
+
+                # Extract text from all pages
+                for page in reader.pages:
+                    text += page.extract_text()
+
+                # Search for any of the patterns in the extracted text
+                found = False
+                for pattern in search_patterns:
+                    if re.search(pattern, text, re.IGNORECASE):  # Search is case-insensitive
+                        print(f"Found '{pattern}' in {filename}")
+                        found = True
+                        break  # Stop searching if any pattern is found
+
+                # If a pattern was found, copy the file to the "found" folder
+                if found:
+                    destination = os.path.join(found_folder, filename)
+                    shutil.copy(pdf_path, destination)
+                    print(f"Copied '{filename}' to the 'found' folder")
+
+            except Exception as e:
+                print(f"Error reading {filename}: {e}")
