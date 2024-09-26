@@ -9,7 +9,7 @@ search_patterns = [
 ]
 
 # Define the folder containing the PDFs
-folder_path = "/Users/michaelvaught/Downloads/05-hosting"  # Update this path to your folder
+folder_path = "folderpathgoeshere"  # Update this path to your folder
 
 # Define the "found" folder where matching files will be copied
 found_folder = os.path.join(folder_path, "found")
